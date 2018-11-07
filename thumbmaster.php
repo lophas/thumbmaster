@@ -38,10 +38,10 @@ if (!class_exists('thumbmaster')) :
             }
 
             if (is_admin()) {
-                add_action('admin_init', array(&$this,'admin_init'));
-                add_action('admin_menu', array(&$this, 'admin_menu'));
+                add_action('admin_init', array($this,'admin_init'));
+                add_action('admin_menu', array($this, 'admin_menu'));
             } //else {
-            add_action("wp_loaded", array(&$this,'thumbmaster_init'));
+            add_action("wp_loaded", array($this,'thumbmaster_init'));
             add_action('wp_head', function () {
                 ?><style>img.wp-post-image{object-fit:cover}</style><?php
             });
@@ -58,12 +58,12 @@ if (!class_exists('thumbmaster')) :
 
         public function thumbmaster_init()
         {
-            add_filter("get_attached_file", array(&$this,"get_attached_file"), 100, 2);
-            add_filter("wp_get_attachment_url", array(&$this,"wp_get_attachment_url"), 100, 2);
-            add_filter("image_downsize", array(&$this,"image_downsize"), 100, 3);
-            add_filter("get_post_metadata", array(&$this,"get_post_metadata"), 100, 4);
-            add_filter("wp_get_attachment_image_attributes", array(&$this,"wp_get_attachment_image_attributes"), 100, 3);
-            add_filter('thumbmaster_remote_images', array(&$this,'get_youtube_images'), 10, 2);
+            add_filter("get_attached_file", array($this,"get_attached_file"), 100, 2);
+            add_filter("wp_get_attachment_url", array($this,"wp_get_attachment_url"), 100, 2);
+            add_filter("image_downsize", array($this,"image_downsize"), 100, 3);
+            add_filter("get_post_metadata", array($this,"get_post_metadata"), 100, 4);
+            add_filter("wp_get_attachment_image_attributes", array($this,"wp_get_attachment_image_attributes"), 100, 3);
+            add_filter('thumbmaster_remote_images', array($this,'get_youtube_images'), 10, 2);
         }
 
         //start filters
@@ -546,13 +546,13 @@ if (!class_exists('thumbmaster')) :
         // admin stuff
         public function admin_init()
         {
-            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array( &$this, 'action_links' ), 10, 2);
+            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'action_links' ), 10, 2);
             if ((defined('DOING_AJAX') || $GLOBALS['pagenow'] == 'edit.php') && empty($GLOBALS['typenow'])) {
                 $GLOBALS['typenow'] = empty($_REQUEST['post_type']) ? 'post' : $_REQUEST['post_type'];
             }
             global $typenow;
-            add_filter('manage_'.$typenow.'_posts_columns', array(&$this,'thumbnail_column'), 1000000000000000);
-            add_action('manage_'.$typenow.'_posts_custom_column', array(&$this,'manage_posts_custom_column'), 10, 2);
+            add_filter('manage_'.$typenow.'_posts_columns', array($this,'thumbnail_column'), 1000000000000000);
+            add_action('manage_'.$typenow.'_posts_custom_column', array($this,'manage_posts_custom_column'), 10, 2);
             //die($GLOBALS['pagenow']);
             switch ($GLOBALS['pagenow']) {
    case 'edit.php':
@@ -568,8 +568,8 @@ add_action('admin_head',function() {
 add_action('admin_print_styles', function () {
     ?><style>.default-thumbnail{width:200px}</style><?php
 });
-add_action('admin_footer', array(&$this, 'media_upload_javascript'));
-add_action('admin_print_scripts', array(&$this, 'admin_enqueue_scripts_upload_image'));
+add_action('admin_footer', array($this, 'media_upload_javascript'));
+add_action('admin_print_scripts', array($this, 'admin_enqueue_scripts_upload_image'));
 break;
 }
         }
@@ -582,8 +582,8 @@ break;
 
             add_settings_section('thumbmaster', __('Thumbmaster'), null, 'media');
             register_setting('media', self::OPTIONS);
-            add_settings_field('default_thumbnail', __('Default image:'), array(&$this, 'default_thumbnail_field'), 'media', 'thumbmaster');
-            add_settings_field('image_resize_dimensions', __('Flexible image scaling:'), array(&$this, 'image_resize_dimensions_field'), 'media', 'thumbmaster');
+            add_settings_field('default_thumbnail', __('Default image:'), array($this, 'default_thumbnail_field'), 'media', 'thumbmaster');
+            add_settings_field('image_resize_dimensions', __('Flexible image scaling:'), array($this, 'image_resize_dimensions_field'), 'media', 'thumbmaster');
         }
 
         public function action_links($actions, $plugin_file)
@@ -660,7 +660,7 @@ jQuery(document).ready(function($) {
                 return $columns;
             }
             $columns['thumbnail'] = __('Thumbnail');
-            //			   add_action('manage_posts_custom_column',  array(&$this,'manage_posts_custom_column'));?><style>.column-thumbnail{width:10%}.column-thumbnail img.wp-post-image{object-fit:cover}</style><?php
+            //			   add_action('manage_posts_custom_column',  array($this,'manage_posts_custom_column'));?><style>.column-thumbnail{width:10%}.column-thumbnail img.wp-post-image{object-fit:cover}</style><?php
             return $columns;
         }
 
