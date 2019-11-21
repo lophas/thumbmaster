@@ -2,7 +2,7 @@
 /*
 Plugin Name: Thumbmaster
 Description:
-Version: 2.6
+Version: 2.7
 Plugin URI:
 Author: Attila Seres
 Author URI:
@@ -301,7 +301,7 @@ if (!class_exists('thumbmaster')) :
 '%40' => '@',
 '%26' => '&',
 '%3D' => '=',
-'+' => '%20',
+//'+' => '%20',
 '%2B' => '+',
 '%24' => '$',
 '%2C' => ',',
