@@ -2,7 +2,7 @@
 /*
 Plugin Name: Thumbmaster
 Description:
-Version: 2.7
+Version: 2.8
 Plugin URI:
 Author: Attila Seres
 Author URI:
@@ -17,6 +17,7 @@ if (!class_exists('thumbmaster')) :
         public static $attachment_id;
         public static $sizes;
         private static $_instance;
+        private static $regeximage;
         public function instance()
         {
             if (!isset(self::$_instance)) {
@@ -36,10 +37,10 @@ if (!class_exists('thumbmaster')) :
             }
 
             if (is_admin()) {
-                add_action('admin_init', array(&$this,'admin_init'));
-                add_action('admin_menu', array(&$this, 'admin_menu'));
+                add_action('admin_init', array($this,'admin_init'));
+                add_action('admin_menu', array($this, 'admin_menu'));
             } //else {
-            add_action("wp_loaded", array(&$this,'thumbmaster_init'));
+            add_action("wp_loaded", array($this,'thumbmaster_init'));
             add_action('wp_head', function () {
                 ?><style>img.wp-post-image{object-fit:cover}</style><?php
             });
@@ -56,12 +57,12 @@ if (!class_exists('thumbmaster')) :
 
         public function thumbmaster_init()
         {
-            add_filter("get_attached_file", array(&$this,"get_attached_file"), 100, 2);
-            add_filter("wp_get_attachment_url", array(&$this,"wp_get_attachment_url"), 100, 2);
-            add_filter("image_downsize", array(&$this,"image_downsize"), 100, 3);
-            add_filter("get_post_metadata", array(&$this,"get_post_metadata"), 100, 4);
-            add_filter("wp_get_attachment_image_attributes", array(&$this,"wp_get_attachment_image_attributes"), 100, 3);
-            add_filter('thumbmaster_remote_images', array(&$this,'get_youtube_images'), 10, 2);
+            add_filter("get_attached_file", array($this,"get_attached_file"), 100, 2);
+            add_filter("wp_get_attachment_url", array($this,"wp_get_attachment_url"), 100, 2);
+            add_filter("image_downsize", array($this,"image_downsize"), 100, 3);
+            add_filter("get_post_metadata", array($this,"get_post_metadata"), 100, 4);
+            add_filter("wp_get_attachment_image_attributes", array($this,"wp_get_attachment_image_attributes"), 100, 3);
+            add_filter('thumbmaster_remote_images', array($this,'get_youtube_images'), 10, 2);
         }
 
         //start filters
@@ -328,110 +329,44 @@ if (!class_exists('thumbmaster')) :
                     return rawurldecode($match[1]);
                 }
             }
-            //return $image;
-            //   if(strpos($image, 'slideshare') !==false && strpos($image, 'googleusercontent') !==false) {
-            //   if(strpos($image, 'slideshare') !==false) return $image;
-//      if(strpos($image, 'fbcdn') !==false) return false;
-//      if(strpos($image,'/ads/')) return false;
-            if (strpos($image, 'pixel.wp.com') !==false) {
-                return false;
+            if(!isset(self::$regeximage)) {
+              $excludes = [
+      'noscript=',
+      'pixel.wp.com',
+      'blank',
+      '.svg',
+      'zoom',
+      'tracker',
+      'doubleclick',
+      'pheedo',
+      'spacer',
+      'advert',
+      'imageads',
+      'player',
+      'feed',
+      'icon',
+      'plugins',
+      'stats',
+      'tweetmeme',
+      'feedburner',
+      'paidcontent',
+      'twitter',
+      'phpAds',
+      'digg',
+      'button',
+      'gomb',
+      'avatar',
+      'adview',
+      'kapjot',
+      'loading',
+      'badge',
+      'hirdetes',
+      'empty',
+      ];
+      self::$regeximage = '/'.strtr(implode('|',$excludes),['.' => '\\.', '/' => '\\/']).'/';
             }
-            if (strpos($image, 'blank') !==false) {
-                return false;
-            }
-            if (strpos($image, '.svg') !==false) {
-                return false;
-            }
-            if (strpos($image, 'zoom') !==false) {
-                return false;
-            }
-            if (strpos($image, 'tracker') !==false) {
-                return false;
-            }
-//      if(strpos($image, 'click.inn.co.il') !==false) return false;
-            if (strpos($image, 'doubleclick') !==false) {
-                return false;
-            }
-            if (strpos($image, 'pheedo') !==false) {
-                return false;
-            }
-            if (strpos($image, 'spacer') !==false) {
-                return false;
-            }
-            if (strpos($image, 'advert') !==false) {
-                return false;
-            }
-//      if(strpos($image, 'hdr') !==false) return false;
-            if (strpos($image, 'imageads') !==false) {
-                return false;
-            }
-            if (strpos($image, 'player') !==false) {
-                return false;
-            }
-//      if(strpos($image, 'share') !==false) return false;
-            if (strpos($image, 'feed') !==false) {
-                return false;
-            }
-            if (strpos($image, 'icon') !==false) {
-                return false;
-            }
-            if (strpos($image, 'plugins') !==false) {
-                return false;
-            }
-            if (strpos($image, 'stats') !==false) {
-                return false;
-            }
-            if (strpos($image, 'tweetmeme') !==false) {
-                return false;
-            }
-            if (strpos($image, 'feedburner') !==false) {
-                return false;
-            }
-            if (strpos($image, 'paidcontent') !==false) {
-                return false;
-            }
-            if (strpos($image, 'twitter') !==false) {
-                return false;
-            }
-            if (strpos($image, 'phpAds') !==false) {
-                return false;
-            }
-            if (strpos($image, 'digg') !==false) {
-                return false;
-            }
-            if (strpos($image, 'button') !==false) {
-                return false;
-            }
-            if (strpos($image, 'gomb') !==false) {
-                return false;
-            }
-            if (strpos($image, 'avatar') !==false) {
-                return false;
-            }
-//      if(strpos($image, 'logo') !==false) return false;
-            if (strpos($image, 'adview') !==false) {
-                return false;
-            }
-            if (strpos($image, 'kapjot') !==false) {
-                return false;
-            }
-            if (strpos($image, 'loading') !==false) {
-                return false;
-            }
-            if (strpos($image, 'badge') !==false) {
-                return false;
-            }
-            if (strpos($image, 'hirdetes') !==false) {
-                return false;
-            }
-            if (strpos($image, 'empty') !==false) {
-                return false;
-            }
-            //   if(substr(strtolower($image),-5)!='.ashx' && strpos($image,'fbcdn')===false) {//hirado.hu es facebook miatt
-//      if($pos=strpos(strtolower($image),'.jpg')) $image=substr($image,0,$pos+4);
-//      if($pos=strpos(strtolower($image),'.gif')) $image=substr($image,0,$pos+4);
-//      if($pos=strpos(strtolower($image),'.png')) $image=substr($image,0,$pos+4);
-            //   }
+            if(preg_match(self::$regeximage, $image, $match)) return false;
+
             $image=str_replace('"', '', $image);
             $image=str_replace("'", '', $image);
             $image=trim($image);
@@ -544,13 +479,13 @@ if (!class_exists('thumbmaster')) :
         // admin stuff
         public function admin_init()
         {
-            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array( &$this, 'action_links' ), 10, 2);
+            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'action_links' ), 10, 2);
             if ((defined('DOING_AJAX') || $GLOBALS['pagenow'] == 'edit.php') && empty($GLOBALS['typenow'])) {
                 $GLOBALS['typenow'] = empty($_REQUEST['post_type']) ? 'post' : $_REQUEST['post_type'];
             }
             global $typenow;
-            add_filter('manage_'.$typenow.'_posts_columns', array(&$this,'thumbnail_column'), 1000000000000000);
-            add_action('manage_'.$typenow.'_posts_custom_column', array(&$this,'manage_posts_custom_column'), 10, 2);
+            add_filter('manage_'.$typenow.'_posts_columns', array($this,'thumbnail_column'), 1000000000000000);
+            add_action('manage_'.$typenow.'_posts_custom_column', array($this,'manage_posts_custom_column'), 10, 2);
             //die($GLOBALS['pagenow']);
             switch ($GLOBALS['pagenow']) {
    case 'edit.php':
@@ -566,8 +501,8 @@ add_action('admin_head',function() {
 add_action('admin_print_styles', function () {
     ?><style>.default-thumbnail{width:200px}</style><?php
 });
-add_action('admin_footer', array(&$this, 'media_upload_javascript'));
-add_action('admin_print_scripts', array(&$this, 'admin_enqueue_scripts_upload_image'));
+add_action('admin_footer', array($this, 'media_upload_javascript'));
+add_action('admin_print_scripts', array($this, 'admin_enqueue_scripts_upload_image'));
 break;
 }
         }
@@ -580,8 +515,8 @@ break;
 
             add_settings_section('thumbmaster', __('Thumbmaster'), null, 'media');
             register_setting('media', self::OPTIONS);
-            add_settings_field('default_thumbnail', __('Default image:'), array(&$this, 'default_thumbnail_field'), 'media', 'thumbmaster');
-            add_settings_field('image_resize_dimensions', __('Flexible image scaling:'), array(&$this, 'image_resize_dimensions_field'), 'media', 'thumbmaster');
+            add_settings_field('default_thumbnail', __('Default image:'), array($this, 'default_thumbnail_field'), 'media', 'thumbmaster');
+            add_settings_field('image_resize_dimensions', __('Flexible image scaling:'), array($this, 'image_resize_dimensions_field'), 'media', 'thumbmaster');
         }
 
         public function action_links($actions, $plugin_file)
@@ -658,7 +593,7 @@ jQuery(document).ready(function($) {
                 return $columns;
             }
             $columns['thumbnail'] = __('Thumbnail');
-            //			   add_action('manage_posts_custom_column',  array(&$this,'manage_posts_custom_column'));?><style>.column-thumbnail{width:10%}.column-thumbnail img.wp-post-image{object-fit:cover}</style><?php
+            //			   add_action('manage_posts_custom_column',  array($this,'manage_posts_custom_column'));?><style>.column-thumbnail{width:10%}.column-thumbnail img.wp-post-image{object-fit:cover}</style><?php
             return $columns;
         }
 
