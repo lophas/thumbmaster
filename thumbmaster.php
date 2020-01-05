@@ -2,7 +2,7 @@
 /*
 Plugin Name: Thumbmaster
 Description:
-Version: 2.8
+Version: 2.9
 Plugin URI:
 Author: Attila Seres
 Author URI:
@@ -242,9 +242,7 @@ if (!class_exists('thumbmaster')) :
 
         public static function get_local_images($html)
         {
-            if ($_SERVER['HTTPS']) {
-                $html = str_replace(str_replace('https://', 'http://', site_url()), site_url(), $html);
-            }
+//            if ($_SERVER['HTTPS']) $html = str_replace(str_replace('https://', 'http://', site_url()), site_url(), $html);
             $regex='/<img.+class=.+wp-image-(\d+).+>/i';
             //			if(preg_match_all($regex, $html, $ids, PREG_SET_ORDER)) $ids = array_filter(array_map(function($a) { return strpos($a[0], site_url())===false ? NULL : self::validateimage($a[1]); },$ids));
             if (preg_match_all($regex, $html, $ids, PREG_SET_ORDER)) {
@@ -260,13 +258,7 @@ if (!class_exists('thumbmaster')) :
 
         public static function get_remote_images($html)
         {
-            if ($_SERVER['HTTPS']) {
-                $html = str_replace(str_replace('https://', 'http://', site_url()), site_url(), $html);
-            }
-            /*
-                           $regex='/<img.+src=[\'"]?([^\'"\r\n\t>]+).+>/i';
-                           if(preg_match_all($regex, $html, $images, PREG_SET_ORDER)) $images = array_map('self::remote_src' ,$images);
-            */
+//            if ($_SERVER['HTTPS']) $html = str_replace(str_replace('https://', 'http://', site_url()), site_url(), $html);
             $images = array();
             $doc = new DOMDocument();
             //				@$doc->loadHTML('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body>'.$html.'</body></html>');
@@ -389,7 +381,7 @@ if (!class_exists('thumbmaster')) :
                         $id = substr($id, 0, $pos);
                     }
                     if ($id) {
-                        $images[] = "http://img.youtube.com/vi/" . $id . "/0.jpg";
+                        $images[] = "https://img.youtube.com/vi/" . $id . "/0.jpg";
                     }
                 }
             }
