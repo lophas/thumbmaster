@@ -2,7 +2,7 @@
 /*
 Plugin Name: Thumbmaster
 Description:
-Version: 3.0
+Version: 3.1
 Plugin URI:
 Author: Attila Seres
 Author URI:
@@ -18,7 +18,7 @@ if (!class_exists('thumbmaster')) :
         public static $sizes;
         private static $_instance;
         private static $regeximage;
-        public function instance()
+        public static function instance()
         {
             if (!isset(self::$_instance)) {
                 self::$_instance =  new self();
